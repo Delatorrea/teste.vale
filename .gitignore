@@ -1,0 +1,19 @@
+# .NET
+*.obj
+*.bin
+*.dll
+*.exe
+*.log
+*.vs/
+*.suo
+*.user
+*.nuget/
+packages/
+obj/
+bin/
+*.userprefs
+
+# Angular
+/dist
+/node_modules
+.angular
