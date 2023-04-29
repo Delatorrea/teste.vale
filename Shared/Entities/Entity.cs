@@ -1,4 +1,3 @@
-
 using Flunt.Notifications;
 
 namespace Shared.Entities
@@ -7,6 +6,7 @@ namespace Shared.Entities
   {
     public Entity()
     {
+
       this.Id = Guid.NewGuid();
       this.CreationDate = DateTime.UtcNow;
     }

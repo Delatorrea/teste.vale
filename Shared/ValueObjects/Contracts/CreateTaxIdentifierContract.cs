@@ -1,15 +1,15 @@
 using Flunt.Extensions.Br.Validations;
 using Flunt.Validations;
 
-namespace Domain.PurchaseContext.ValueObjects.Contracts
+namespace Shared.ValueObjects.Contracts
 {
     public class CreateTaxIdentifierContract : Contract<TaxIdentifier>
     {
         public CreateTaxIdentifierContract(TaxIdentifier taxIdentifier)
         {
             Requires()
-                .IsNotNullOrEmpty(taxIdentifier.Number, "Tax Identifier", "Must not be null or empty.")
-                .IsCnpj(taxIdentifier.Number, "Tax Identifier", "Tax Identifier Invalid.");
+                .IsNotNullOrEmpty(taxIdentifier.ToString(), "Tax Identifier", "Must not be null or empty.")
+                .IsCpfOrCnpj(taxIdentifier.ToString(), "Tax Identifier", "Tax Identifier Invalid.");
         }
     }
 }

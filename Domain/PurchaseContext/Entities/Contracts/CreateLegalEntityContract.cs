@@ -2,9 +2,9 @@ using Flunt.Validations;
 
 namespace Domain.PurchaseContext.Entities.Contracts
 {
-    public class CreateCompanyContract : Contract<string>
+    public class CreateLegalEntityContract : Contract<LegalEntity>
     {
-        public CreateCompanyContract(Company company)
+        public CreateLegalEntityContract(LegalEntity company)
         {
             Requires()
                 .IsNotNullOrWhiteSpace(company.TradeName, "Trade Name", "Must not be null or blanks");
