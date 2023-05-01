@@ -9,8 +9,8 @@ namespace Shared.ValueObjects
 
         public ZipCode(string number)
         {
-            AddNotifications(new CreateZipCodeContract(this));
             this._value = number;
+            AddNotifications(new CreateZipCodeContract(this));
         }
 
         public override string ToString()

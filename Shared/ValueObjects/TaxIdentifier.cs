@@ -9,8 +9,8 @@ namespace Shared.ValueObjects
 
         public TaxIdentifier(string number)
         {
-            AddNotifications(new CreateTaxIdentifierContract(this));
             this._value = number;
+            AddNotifications(new CreateTaxIdentifierContract(this));
         }
 
         public override string ToString()

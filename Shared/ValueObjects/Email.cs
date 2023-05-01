@@ -9,8 +9,8 @@ namespace Shared.ValueObjects
 
         public Email(string value)
         {
-            AddNotifications(new CreateEmailContract(this));
             this._value = value;
+            AddNotifications(new CreateEmailContract(this));
         }
 
         public override string ToString()
