@@ -10,5 +10,6 @@ namespace Domain.PurchaseContext.Entities
         }
 
         public Email Email { get; private set; }
+        public List<Company> Companies { get; } = new();
     }
 }
