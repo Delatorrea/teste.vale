@@ -29,7 +29,7 @@ namespace Infra
 
         public string GetConnectionString()
         {
-            return "";
+            return "Server=localhost;Port=5432;User Id=postegres;Password=mv2390;Database=vale;";
         }
     }
 }

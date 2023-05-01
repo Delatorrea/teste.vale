@@ -1,15 +1,56 @@
+using Domain.PurchaseContext.Entities.Contracts;
+using Flunt.Notifications;
 using Shared.ValueObjects;
 
 namespace Domain.PurchaseContext.Entities
 {
     public class Supplier : LegalEntity
     {
-        public Supplier(TaxIdentifier taxIdentifier, string tradeName, Email email, ZipCode zipCode) : base(taxIdentifier, tradeName, zipCode)
+        public Supplier(TaxIdentifier taxIdentifier, string tradeName, Address address, Email email, DateTime? birthDate = null, string? identityCard = null) : base(taxIdentifier, tradeName, address)
         {
-            this.Email = email;
+            Email = email;
+            BirthDate = birthDate ?? new DateTime(1800, 1, 1);
+            IdentityCard = identityCard;
+
+            if (IsAnIndividual())
+            {
+                AddNotifications(new CreateIndividualSupplierContract(this));
+
+                if (!CheckIfTheIndividualIsAdult() && address.State == "PR")
+                {
+                    AddNotification("BirthDate", "An underage natural person supplier is not allowed in Paraná.");
+                }
+            }
+
+            AddNotifications(taxIdentifier, address, email);
         }
 
         public Email Email { get; private set; }
+        public DateTime BirthDate { get; private set; }
+        public string? IdentityCard { get; private set; }
+
         public List<Company> Companies { get; } = new();
+
+        public bool CheckIfTheIndividualIsAdult ()
+        {
+            if (IsAnIndividual())
+            {
+                if (CalculateAge() >= 18)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private int CalculateAge()
+        {
+            DateTime today = DateTime.Today;
+            int age = today.Year - BirthDate.Year;
+
+            if (BirthDate > today.AddYears(-age))
+                age--;
+
+            return age;
+        }
     }
 }

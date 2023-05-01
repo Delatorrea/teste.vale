@@ -6,9 +6,8 @@ namespace Shared.Entities
   {
     public Entity()
     {
-
-      this.Id = Guid.NewGuid();
-      this.CreationDate = DateTime.UtcNow;
+      Id = Guid.NewGuid();
+      CreationDate = DateTime.UtcNow;
     }
 
     public Guid Id { get; set; }
