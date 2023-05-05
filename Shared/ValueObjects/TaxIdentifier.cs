@@ -5,17 +5,14 @@ namespace Shared.ValueObjects
 {
     public class TaxIdentifier: Notifiable<Notification>
     {
-        private readonly string _value;
+        public string Value { get; private set; } = string.Empty;
+
+        public TaxIdentifier() { }
 
         public TaxIdentifier(string number)
         {
-            this._value = number;
+            Value = number;
             AddNotifications(new CreateTaxIdentifierContract(this));
-        }
-
-        public override string ToString()
-        {
-            return this._value;
         }
     }
 }

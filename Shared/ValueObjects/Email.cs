@@ -5,17 +5,14 @@ namespace Shared.ValueObjects
 {
     public class Email : Notifiable<Notification>
     {
-        private readonly string _value;
+        public string Value { get; private set; } = string.Empty;
+
+        protected Email() { }
 
         public Email(string value)
         {
-            this._value = value;
+            Value = value;
             AddNotifications(new CreateEmailContract(this));
-        }
-
-        public override string ToString()
-        {
-            return this._value;
         }
     }
 }

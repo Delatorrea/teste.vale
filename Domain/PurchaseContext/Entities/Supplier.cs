@@ -1,11 +1,13 @@
 using Domain.PurchaseContext.Entities.Contracts;
-using Flunt.Notifications;
+using Shared.Entities;
 using Shared.ValueObjects;
 
 namespace Domain.PurchaseContext.Entities
 {
-    public class Supplier : LegalEntity
+    public class Supplier : Entity
     {
+        public Supplier() { }
+
         public Supplier(TaxIdentifier taxIdentifier, string tradeName, Address address, Email email, DateTime? birthDate = null, string? identityCard = null) : base(taxIdentifier, tradeName, address)
         {
             Email = email;
@@ -25,7 +27,7 @@ namespace Domain.PurchaseContext.Entities
             AddNotifications(taxIdentifier, address, email);
         }
 
-        public Email Email { get; private set; }
+        public Email? Email { get; private set; }
         public DateTime BirthDate { get; private set; }
         public string? IdentityCard { get; private set; }
 

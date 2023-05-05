@@ -6,14 +6,16 @@ namespace Shared.ValueObjects
 {
     public class Address : Notifiable<Notification>
     {
-        public string Street { get; private set; }
-        public string Number { get; private set; }
-        public string Complement { get; private set; }
-        public string Neighborhood { get; private set; }
-        public string City { get; private set; }
-        public string State { get; private set; }
-        public string Country { get; private set; }
-        public string PostalCode { get; private set; }
+        public string Street { get; private set; } = string.Empty;
+        public string Number { get; private set; } = string.Empty;
+        public string Complement { get; private set; } = string.Empty;
+        public string Neighborhood { get; private set; } = string.Empty;
+        public string City { get; private set; } = string.Empty;
+        public string State { get; private set; } = string.Empty;
+        public string Country { get; private set; } = string.Empty;
+        public string PostalCode { get; private set; } = string.Empty;
+
+        protected Address() {  }
 
         public Address(string street, string number, string complement, string neighborhood, string city, string state, string country, string postalCode)
         {

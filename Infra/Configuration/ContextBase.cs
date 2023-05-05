@@ -1,8 +1,10 @@
 ﻿using Domain.PurchaseContext.Entities;
+using Flunt.Notifications;
+using Infra.Configuration.Maps;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infra
+namespace Infra.Configuration
 {
     public class ContextBase : IdentityDbContext<User>
     {
@@ -21,15 +23,16 @@ namespace Infra
             }
         }
 
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            builder.Entity<User>().ToTable("AspNetUsers").HasKey(t => t.Id);
-            base.OnModelCreating(builder);
+            modelBuilder.Entity<User>().ToTable("AspNetUsers").HasKey(t => t.Id);
+            modelBuilder.Ignore<Notification>();
+            modelBuilder.Ignore<Notifiable<Notification>>();
+            new CompanyMap().Configure(modelBuilder.Entity<Company>());
+            new SupplierMap().Configure(modelBuilder.Entity<Supplier>());
+            base.OnModelCreating(modelBuilder);
         }
 
-        public string GetConnectionString()
-        {
-            return "Server=localhost;Port=5432;User Id=postegres;Password=mv2390;Database=vale;";
-        }
+        public string GetConnectionString() => "Server=localhost;Port=5432;User Id=delatorre;Password=delatorre;Database=vale;";
     }
 }

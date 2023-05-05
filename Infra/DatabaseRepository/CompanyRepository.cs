@@ -1,6 +1,6 @@
 ﻿using Domain.PurchaseContext.Entities;
 
-namespace Infra
+namespace Infra.DatabaseRepository
 {
     public class CompanyRepository : GenericRepository<Company>
     { }

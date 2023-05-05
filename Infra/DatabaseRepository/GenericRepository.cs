@@ -1,9 +1,10 @@
 ﻿using Domain.PurchaseContext.Interfaces.Repositories;
+using Infra.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices;
 
-namespace Infra
+namespace Infra.DatabaseRepository
 {
     public class GenericRepository<T> : IGenericRepository<T>, IDisposable where T : class
     {

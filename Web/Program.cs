@@ -1,5 +1,5 @@
-using Infra;
 using Domain.PurchaseContext.Entities;
+using Infra.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -8,6 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<ContextBase>(options =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+    )
+);
+builder.Services.AddDefaultIdentity<User>(options =>
+    options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ContextBase>();
 
 var app = builder.Build();
 
@@ -18,14 +27,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-builder.Services.AddDbContext<ContextBase>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    )
-);
-builder.Services.AddDefaultIdentity<User>(options =>
-    options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ContextBase>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
