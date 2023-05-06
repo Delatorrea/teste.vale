@@ -1,11 +1,15 @@
-﻿namespace Domain.PurchaseContext.Interfaces.Services
+﻿using Shared.Entities;
+
+namespace Domain.PurchaseContext.Interfaces.Services
 {
-    public interface IGenericService<T> where T : class
+    public interface IGenericService<T, U> 
+        where T : class 
+        where U : class
     {
-        Task Add(T entity);
-        Task Update(T entity);
-        Task Delete(T entity);
-        Task<T> GetById(int id);
-        Task<List<T>> GetAll();
+        Task<Result<U>> Add(T entity);
+        Task<Result<U>> Update(T entity);
+        Task<Result<U>> Delete(string id);
+        Task<Result<U>> GetById(string id);
+        Task<Result<List<U>>> GetAll();
     }
 }
