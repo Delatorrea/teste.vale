@@ -7,7 +7,7 @@ namespace Shared.ValueObjects.Contracts
         public CreateEmailContract(Email email)
         {
             Requires()
-                .IsEmail(email.ToString(), "Email", "Is not valid");
+                .IsEmail(email.Value, "Email", "Is not valid");
         }
     }
 }

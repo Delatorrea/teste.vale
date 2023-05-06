@@ -8,8 +8,8 @@ namespace Shared.ValueObjects.Contracts
         public CreateTaxIdentifierContract(TaxIdentifier taxIdentifier)
         {
             Requires()
-                .IsNotNullOrEmpty(taxIdentifier.ToString(), "Tax Identifier", "Must not be null or empty.")
-                .IsCpfOrCnpj(taxIdentifier.ToString(), "Tax Identifier", "Tax Identifier Invalid.");
+                .IsNotNullOrEmpty(taxIdentifier.Value, "Tax Identifier", "Must not be null or empty.")
+                .IsCpfOrCnpj(taxIdentifier.Value, "Tax Identifier", "Tax Identifier Invalid.");
         }
     }
 }
