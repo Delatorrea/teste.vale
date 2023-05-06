@@ -1,49 +1,52 @@
 ﻿using Domain.PurchaseContext.Interfaces.Repositories;
-using Infra.Configuration;
+using Infra.PurchaseContext.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices;
 
-namespace Infra.DatabaseRepository
+namespace Infra.PurchaseContext.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T>, IDisposable where T : class
     {
-        private readonly DbContextOptions<ContextBase> _option;
+        protected readonly DbContextOptions<ContextBase> option;
+        protected readonly IConfiguration configuration;
 
-        public GenericRepository()
+        public GenericRepository(IConfiguration config)
         {
-            _option = new DbContextOptions<ContextBase>();
+            option = new DbContextOptions<ContextBase>();
+            configuration = config;
         }
 
         public async Task Add(T entity)
         {
-            await using var data = new ContextBase(_option);
+            await using var data = new ContextBase(option, configuration);
             await data.Set<T>().AddAsync(entity);
             await data.SaveChangesAsync();
         }
 
         public async Task Delete(T entity)
         {
-            await using var data = new ContextBase(_option);
+            await using var data = new ContextBase(option, configuration);
             data.Set<T>().Remove(entity);
             await data.SaveChangesAsync();
         }
 
-        public async Task<T> GetById(int id)
+        public async Task<T> GetById(Guid id)
         {
-            await using var data = new ContextBase(_option);
+            await using var data = new ContextBase(option, configuration);
             return await data.Set<T>().FindAsync(id);
         }
 
         public async Task<List<T>> GetAll()
         {
-            await using var data = new ContextBase(_option);
+            await using var data = new ContextBase(option, configuration);
             return await data.Set<T>().ToListAsync();
         }
 
         public async Task Update(T entity)
         {
-            await using var data = new ContextBase(_option);
+            await using var data = new ContextBase(option, configuration);
             data.Set<T>().Update(entity);
             await data.SaveChangesAsync();
         }

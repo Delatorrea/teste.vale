@@ -1,14 +1,19 @@
-﻿using Domain.PurchaseContext.Entities;
-using Flunt.Notifications;
-using Infra.Configuration.Maps;
+﻿using Flunt.Notifications;
+using Domain.PurchaseContext.Entities;
+using Infra.PurchaseContext.Configuration.Maps;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
-namespace Infra.Configuration
+namespace Infra.PurchaseContext.Configuration
 {
     public class ContextBase : IdentityDbContext<User>
     {
-        public ContextBase(DbContextOptions options) : base(options) { }
+        private readonly IConfiguration _configuration;
+        public ContextBase(DbContextOptions options, IConfiguration config) : base(options) 
+        {
+            _configuration = config;
+        }
 
         public DbSet<Company> Companies { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
@@ -18,7 +23,7 @@ namespace Infra.Configuration
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql(GetConnectionString());
+                optionsBuilder.UseNpgsql(_configuration.GetConnectionString("DefaultConnection"));
                 base.OnConfiguring(optionsBuilder);
             }
         }
@@ -32,7 +37,5 @@ namespace Infra.Configuration
             new SupplierMap().Configure(modelBuilder.Entity<Supplier>());
             base.OnModelCreating(modelBuilder);
         }
-
-        public string GetConnectionString() => "Server=localhost;Port=5432;User Id=delatorre;Password=delatorre;Database=vale;";
     }
 }

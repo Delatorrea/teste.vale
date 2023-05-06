@@ -1,20 +1,29 @@
 ﻿using Domain.PurchaseContext.Entities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
 
-namespace Infra.Configuration.Maps
+namespace Infra.PurchaseContext.Configuration.Maps
 {
-    public class CompanyMap : IEntityTypeConfiguration<Company>
+    public class SupplierMap : IEntityTypeConfiguration<Supplier>
     {
-        public void Configure(EntityTypeBuilder<Company> builder)
+        public void Configure(EntityTypeBuilder<Supplier> builder)
         {
-            builder.ToTable("Company");
+            builder.ToTable("Supplier");
 
             builder.HasKey(x => x.Id);
 
             builder.OwnsOne(x => x.TaxIdentifier)
                .Property(x => x.Value)
                .HasColumnName("TaxIdentifier")
+               .IsRequired(true);
+
+            builder.Property(x => x.BirthDate);
+
+            builder.Property(x => x.IdentityCard);
+
+            builder.OwnsOne(x => x.Email)
+               .Property(x => x.Value)
+               .HasColumnName("Email")
                .IsRequired(true);
 
             builder.OwnsOne(x => x.Address)
@@ -52,8 +61,8 @@ namespace Infra.Configuration.Maps
                .HasColumnName("PostalCode")
             .IsRequired(true);
 
-            builder.HasMany(e => e.Suppliers)
-                .WithMany(e => e.Companies);
+            builder.HasMany(e => e.Companies)
+                .WithMany(e => e.Suppliers);
 
             builder.Property(x => x.CreationDate)
                 .HasColumnName("CreatioDate")
