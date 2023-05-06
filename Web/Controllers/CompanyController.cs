@@ -1,31 +1,41 @@
-﻿using Domain.PurchaseContext.Entities;
-using Domain.PurchaseContext.Services;
+﻿using Domain.PurchaseContext.DTOs;
+using Domain.PurchaseContext.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
-using Web.DTOs;
 
 namespace Web.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class CompanyController : ControllerBase
     {
         private readonly ILogger<CompanyController> _logger;
-        private readonly CompanyService _companyService;
+        private readonly ICompanyService _companyService;
 
-        public CompanyController(ILogger<CompanyController> logger, CompanyService service)
+        public CompanyController(ILogger<CompanyController> logger, ICompanyService companyService)
         {
             _logger = logger;
-            _companyService = service;
+            _companyService = companyService;
         }
 
         [HttpPost]
-        public async Task <IActionResult> Post ([FromBody] CompanyDTO body)
+        public async Task<IActionResult> Post([FromForm] CompanyDTO body)
         {
-            if (body == null)
-                return BadRequest();
+            var response = await _companyService.Add(body);
+            if (!response.IsValid())
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
 
-            var response = await _companyService.GetAll();
-
+        [HttpGet("GetByTaxIdentifier/{taxIdentifier}")]
+        public async Task<IActionResult> GetByTaxIdentifier([FromRoute] string taxIdentifier)
+        {
+            var response = await _companyService.GetByTaxIdentifier(taxIdentifier);
+            if (!response.IsValid())
+            {
+                return BadRequest(response);
+            }
             return Ok(response);
         }
     }

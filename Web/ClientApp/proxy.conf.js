@@ -5,15 +5,27 @@ const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_H
 
 const PROXY_CONFIG = [
   {
-    context: [
-      "/weatherforecast",
-   ],
+    context: ["/company", "/api/company"],
     target: target,
     secure: false,
     headers: {
       Connection: 'Keep-Alive'
     }
+  },
+  {
+    context: [
+      "/company/GetByTaxIdentifier/:id",
+      "/api/company/GetByTaxIdentifier/"
+    ],
+    target: target,
+    secure: false,
+    headers: {
+      Connection: 'Keep-Alive'
+    },
+    pathRewrite: {
+      '^/company/GetByTaxIdentifier/([0-9]+)$': '/api/company/GetByTaxIdentifier/$1'
+    }
   }
-]
+];
 
 module.exports = PROXY_CONFIG;
