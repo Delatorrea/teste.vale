@@ -8,7 +8,7 @@ namespace Domain.PurchaseContext.Entities.Contracts
         public CreateCompanyContract(Company company)
         {
             Requires()
-                .IsCnpj(company.TaxIdentifier.ToString(), "Tax Identifier", "Tax Identifier Invalid.");
+                .IsCnpj(company.TaxIdentifier.Value, "Tax Identifier", "Tax Identifier Invalid.");
         }
     }
 }

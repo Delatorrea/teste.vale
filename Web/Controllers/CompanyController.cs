@@ -18,7 +18,7 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromForm] CompanyDTO body)
+        public async Task<IActionResult> Post([FromBody] CompanyDTO body)
         {
             var response = await _companyService.Add(body);
             if (!response.IsValid())
