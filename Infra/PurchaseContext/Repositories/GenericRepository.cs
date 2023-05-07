@@ -1,8 +1,11 @@
-﻿using Domain.PurchaseContext.Interfaces.Repositories;
+﻿using Domain.PurchaseContext.DTOs;
+using Domain.PurchaseContext.Entities;
+using Domain.PurchaseContext.Interfaces.Repositories;
 using Infra.PurchaseContext.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Win32.SafeHandles;
+using System.Drawing.Printing;
 using System.Runtime.InteropServices;
 
 namespace Infra.PurchaseContext.Repositories
@@ -38,10 +41,33 @@ namespace Infra.PurchaseContext.Repositories
             return await data.Set<T>().FindAsync(id);
         }
 
-        public async Task<List<T>> GetAll()
+        public async Task<ResponseGetAllDTO<List<T>>> GetAll(int page = 1, int pageSize = 10)
         {
+            var list = new List<T>();
             await using var data = new ContextBase(option, configuration);
-            return await data.Set<T>().ToListAsync();
+            var totalCount = data.Set<T>().Count();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+            var result = await data.Set<T>()
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+            if (result is null)
+                return new ResponseGetAllDTO<List<T>>
+                {
+                   TotalCount = totalCount,
+                   TotalPages = totalPages,
+                   Page = page,
+                   PageSize = pageSize,
+                   Data = list
+                };
+            return new ResponseGetAllDTO<List<T>>
+            {
+                TotalCount = totalCount,
+                TotalPages = totalPages,
+                Page = page,
+                PageSize = pageSize,
+                Data = result
+            };
         }
 
         public async Task Update(T entity)

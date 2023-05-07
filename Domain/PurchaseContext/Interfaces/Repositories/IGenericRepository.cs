@@ -1,4 +1,6 @@
-﻿namespace Domain.PurchaseContext.Interfaces.Repositories
+﻿using Domain.PurchaseContext.DTOs;
+
+namespace Domain.PurchaseContext.Interfaces.Repositories
 {
     public interface IGenericRepository<T> where T : class
     {
@@ -6,6 +8,6 @@
         Task Update(T entity);
         Task Delete(T entity);
         Task<T> GetById(Guid id);
-        Task<List<T>> GetAll();
+        Task<ResponseGetAllDTO<List<T>>> GetAll(int page, int pageSize);
     }
 }

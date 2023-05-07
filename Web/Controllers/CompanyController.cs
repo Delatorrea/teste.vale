@@ -28,6 +28,17 @@ namespace Web.Controllers
             return Ok(response);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromQuery] int page = 1, int pageSize = 10)
+        {
+            var response = await _companyService.GetAll(page, pageSize);
+            if (!response.IsValid())
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
+
         [HttpGet("GetByTaxIdentifier/{taxIdentifier}")]
         public async Task<IActionResult> GetByTaxIdentifier([FromRoute] string taxIdentifier)
         {

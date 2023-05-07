@@ -1,4 +1,5 @@
-﻿using Shared.Entities;
+﻿using Domain.PurchaseContext.DTOs;
+using Shared.Entities;
 
 namespace Domain.PurchaseContext.Interfaces.Services
 {
@@ -10,6 +11,6 @@ namespace Domain.PurchaseContext.Interfaces.Services
         Task<Result<U>> Update(T entity);
         Task<Result<U>> Delete(string id);
         Task<Result<U>> GetById(string id);
-        Task<Result<List<U>>> GetAll();
+        Task<Result<ResponseGetAllDTO<List<U>>>> GetAll(int page, int pageSize);
     }
 }

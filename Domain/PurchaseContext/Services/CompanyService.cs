@@ -71,9 +71,10 @@ namespace Domain.PurchaseContext.Services
             throw new NotImplementedException();
         }
 
-        public Task<Result<List<Company>>> GetAll()
+        public async Task<Result<ResponseGetAllDTO<List<Company>>>> GetAll(int page = 1, int pageSize = 10)
         {
-            throw new NotImplementedException();
+            var companies = await _companiesRepository.GetAll(page, pageSize);
+            return new(companies, null, true);
         }
 
         public Task<Result<Company>> GetById(string id)
