@@ -2,7 +2,7 @@
 
 namespace Domain.PurchaseContext.Interfaces.Repositories
 {
-    public interface ICompaniesRepository : IGenericRepository<Company>
+    public interface ICompanyRepository : IGenericRepository<Company>
     {
         Task<Company?> GetByTaxIdentifier(string taxIdentifier);
     }

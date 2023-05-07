@@ -6,21 +6,21 @@ namespace Web.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CompanyController : ControllerBase
+    public class SupplierController : ControllerBase
     {
-        private readonly ILogger<CompanyController> _logger;
-        private readonly ICompanyService _companyService;
+        private readonly ILogger<SupplierController> _logger;
+        private readonly ISupplierService _supplierService;
 
-        public CompanyController(ILogger<CompanyController> logger, ICompanyService companyService)
+        public SupplierController(ILogger<SupplierController> logger, ISupplierService supplierService)
         {
             _logger = logger;
-            _companyService = companyService;
+            _supplierService = supplierService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CompanyDTO body)
+        public async Task<IActionResult> Post([FromBody] SupplierDTO body)
         {
-            var response = await _companyService.Add(body);
+            var response = await _supplierService.Add(body);
             if (!response.IsValid())
             {
                 return BadRequest(response);
@@ -31,7 +31,7 @@ namespace Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] int page = 1, int pageSize = 10)
         {
-            var response = await _companyService.GetAll(page, pageSize);
+            var response = await _supplierService.GetAll(page, pageSize);
             if (!response.IsValid())
             {
                 return BadRequest(response);
@@ -42,7 +42,7 @@ namespace Web.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] string id)
         {
-            var response = await _companyService.GetById(id);
+            var response = await _supplierService.GetById(id);
             if (!response.IsValid())
             {
                 return BadRequest(response);
@@ -53,7 +53,7 @@ namespace Web.Controllers
         [HttpGet("GetByTaxIdentifier/{taxIdentifier}")]
         public async Task<IActionResult> GetByTaxIdentifier([FromRoute] string taxIdentifier)
         {
-            var response = await _companyService.GetByTaxIdentifier(taxIdentifier);
+            var response = await _supplierService.GetByTaxIdentifier(taxIdentifier);
             if (!response.IsValid())
             {
                 return BadRequest(response);
@@ -62,9 +62,9 @@ namespace Web.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromRoute] string id, [FromBody] CompanyDTO body)
+        public async Task<IActionResult> Update([FromRoute] string id, [FromBody] SupplierDTO body)
         {
-            var response = await _companyService.Update(id, body);
+            var response = await _supplierService.Update(id, body);
             if (!response.IsValid())
             {
                 return BadRequest(response);
@@ -75,7 +75,7 @@ namespace Web.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] string id)
         {
-            var response = await _companyService.Delete(id);
+            var response = await _supplierService.Delete(id);
             if (!response.IsValid())
             {
                 return BadRequest(response);

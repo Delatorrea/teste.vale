@@ -33,7 +33,37 @@ const PROXY_CONFIG = [
     pathRewrite: {
       '^/company/GetByTaxIdentifier/([0-9]+)$': '/api/company/GetByTaxIdentifier/$1'
     }
-  }
+  },
+  {
+    context: [
+      "/supplier",
+      "/supplier/:id",
+      "/api/supplier",
+      "/api/supplier/:id"
+    ],
+    target: target,
+    secure: false,
+    headers: {
+      Connection: 'Keep-Alive'
+    },
+    pathRewrite: {
+      '^/supplier/([0-9]+)$': '/api/supplier/$1'
+    }
+  },
+  {
+    context: [
+      "/supplier/GetByTaxIdentifier/:id",
+      "/api/supplier/GetByTaxIdentifier/"
+    ],
+    target: target,
+    secure: false,
+    headers: {
+      Connection: 'Keep-Alive'
+    },
+    pathRewrite: {
+      '^/supplier/GetByTaxIdentifier/([0-9]+)$': '/api/supplier/GetByTaxIdentifier/$1'
+    }
+  },
 ];
 
 module.exports = PROXY_CONFIG;

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Infra.PurchaseContext.Repositories
 {
-    public class CompanyRepository : GenericRepository<Company>, ICompaniesRepository
+    public class CompanyRepository : GenericRepository<Company>, ICompanyRepository
     {
         public CompanyRepository(IConfiguration config) : base(config) { }
 

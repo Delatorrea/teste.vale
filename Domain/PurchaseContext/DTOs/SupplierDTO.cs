@@ -15,6 +15,6 @@
         public string State { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
         public string PostalCode { get; set; } = string.Empty;
-        public List<CompanyDTO> Companies { get; } = new();
+        public List<string> Companies { get; } = new();
     }
 }

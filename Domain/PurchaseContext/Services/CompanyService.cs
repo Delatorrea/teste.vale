@@ -12,10 +12,10 @@ namespace Domain.PurchaseContext.Services
 {
     public class CompanyService : ICompanyService
     {
-        private readonly ICompaniesRepository _companiesRepository;
+        private readonly ICompanyRepository _companiesRepository;
         private readonly IPostalCodeService _postalCodeService;
 
-        public CompanyService(ICompaniesRepository companiesRepository, IPostalCodeService postalCodeService)
+        public CompanyService(ICompanyRepository companiesRepository, IPostalCodeService postalCodeService)
         {
             _companiesRepository = companiesRepository;
             _postalCodeService = postalCodeService;

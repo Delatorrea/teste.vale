@@ -28,13 +28,14 @@ builder.Services.AddDefaultIdentity<User>(options =>
 // INTERFACE AND REPOSITORY
 
 builder.Services.AddSingleton(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddSingleton<ICompaniesRepository, CompanyRepository>();
+builder.Services.AddSingleton<ICompanyRepository, CompanyRepository>();
 builder.Services.AddSingleton<ISuppliersRepository, SupplierRepository>();
 builder.Services.AddSingleton<IPostalCodeRepository, PostalCodeRepository>();
 
 // Services
 
 builder.Services.AddSingleton<ICompanyService, CompanyService>();
+builder.Services.AddSingleton<ISupplierService, SupplierService>();
 builder.Services.AddSingleton<IPostalCodeService, PostalCodeService>();
 
 IConfiguration config = new ConfigurationBuilder()
