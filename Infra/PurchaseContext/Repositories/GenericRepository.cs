@@ -1,11 +1,9 @@
 ﻿using Domain.PurchaseContext.DTOs;
-using Domain.PurchaseContext.Entities;
 using Domain.PurchaseContext.Interfaces.Repositories;
 using Infra.PurchaseContext.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Win32.SafeHandles;
-using System.Drawing.Printing;
 using System.Runtime.InteropServices;
 
 namespace Infra.PurchaseContext.Repositories

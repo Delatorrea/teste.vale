@@ -60,5 +60,16 @@ namespace Web.Controllers
             }
             return Ok(response);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] CompanyDTO body)
+        {
+            var response = await _companyService.Update(id, body);
+            if (!response.IsValid())
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
     }
 }

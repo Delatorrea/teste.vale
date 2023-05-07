@@ -122,9 +122,55 @@ namespace Domain.PurchaseContext.Services
             return new(existingCompany, null, true);
         }
 
-        public Task<Result<Company>> Update(CompanyDTO entity)
+        public async Task<Result<Company>> Update(Guid id, CompanyDTO entity)
         {
-            throw new NotImplementedException();
+            List<Notification> notifications = new();
+
+            TaxIdentifier taxIdentifier = new(entity.TaxIdentifier);
+            if (!taxIdentifier.IsValid)
+            {
+                return new Result<Company>(null, Error.Create("BadRequest", taxIdentifier.Notifications), false);
+            }
+            var existingCompany = await _companiesRepository.GetByTaxIdentifier(taxIdentifier.Value);
+
+            if (existingCompany is null)
+            {
+                Notification notification = new("Tax Identifier", "is not exists.");
+                notifications.Add(notification);
+                return new Result<Company>(null, Error.Create("BadRequest", notifications), false);
+            }
+            Address address = new(entity.Street,
+                                  entity.Number,
+                                  entity.Complement,
+                                  entity.Neighborhood,
+                                  entity.City,
+                                  entity.State,
+                                  entity.Country,
+                                  entity.PostalCode);
+
+            // TODO: Incluir no construtor o Fornecedor
+            Company newCompany = new(id,
+                                     taxIdentifier,
+                                     entity.TradeName,
+                                     address,
+                                     existingCompany.CreationDate);
+
+            if (!newCompany.IsValid)
+            {
+                return new Result<Company>(null, Error.Create("Validations", newCompany.Notifications), false);
+            }
+
+
+            var validationCep = await _postalCodeService.GetByPostalCode(newCompany.Address.PostalCode);
+            if (!validationCep.IsValid())
+            {
+                return new Result<Company>(null,
+                                           Error.Create("BadRequest", validationCep.GetErroDescriptions()),
+                                           false);
+            }
+
+            await _companiesRepository.Update(newCompany);
+            return new Result<Company>(newCompany, null, true);
         }
     }
 }

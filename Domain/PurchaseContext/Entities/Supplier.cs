@@ -1,6 +1,6 @@
-using Domain.PurchaseContext.Entities.Contracts;
 using Shared.Entities;
 using Shared.ValueObjects;
+using Domain.PurchaseContext.Entities.Contracts;
 
 namespace Domain.PurchaseContext.Entities
 {
@@ -9,6 +9,26 @@ namespace Domain.PurchaseContext.Entities
         public Supplier() { }
 
         public Supplier(TaxIdentifier taxIdentifier, string tradeName, Address address, Email email, DateTime? birthDate = null, string? identityCard = null) : base(taxIdentifier, tradeName, address)
+        {
+            Email = email;
+            BirthDate = birthDate ?? new DateTime(1800, 1, 1);
+            IdentityCard = identityCard;
+
+            if (IsAnIndividual())
+            {
+                AddNotifications(new CreateIndividualSupplierContract(this));
+
+                if (!CheckIfTheIndividualIsAdult() && address.State == "PR")
+                {
+                    AddNotification("BirthDate", "An underage natural person supplier is not allowed in Paraná.");
+                }
+            }
+
+            AddNotifications(taxIdentifier, address, email);
+        }
+
+        public Supplier(Guid id, TaxIdentifier taxIdentifier, string tradeName, Address address, Email email, DateTime creationDate, DateTime? birthDate = null, string? identityCard = null) 
+            : base(id, taxIdentifier, tradeName, address, creationDate)
         {
             Email = email;
             BirthDate = birthDate ?? new DateTime(1800, 1, 1);

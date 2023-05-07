@@ -20,15 +20,25 @@ namespace Shared.Entities
             AddNotifications(new CreateEntityContract(this));
         }
 
-        public Guid Id { get; set; }
+        public Entity(Guid id, TaxIdentifier taxIdentifier, string tradeName, Address address, DateTime creationDate)
+        {
+            Id = id;
+            TaxIdentifier = taxIdentifier;
+            TradeName = tradeName;
+            Address = address;
+            CreationDate = creationDate;
+            AddNotifications(new UpdateEntityContract(this));
+        }
+
+        public Guid Id { get; private set; }
         public TaxIdentifier TaxIdentifier { get; private set; }
         public string TradeName { get; private set; } = string.Empty;
         public Address Address { get; private set; }
-        public DateTime CreationDate { get; set; }
+        public DateTime CreationDate { get; private set; }
 
-        public bool IsAnIndividual() => IsNotNull(TaxIdentifier) ? TaxIdentifier.Value.Length == 11 : false;
+        public bool IsAnIndividual() => IsNotNull(TaxIdentifier) && TaxIdentifier.Value.Length == 11;
 
-        public bool IsLegalEntity() => IsNotNull(TaxIdentifier) ? TaxIdentifier.Value.Length == 14 : false;
+        public bool IsLegalEntity() => IsNotNull(TaxIdentifier) && TaxIdentifier.Value.Length == 14;
 
         public string GetNotifications()
         {
