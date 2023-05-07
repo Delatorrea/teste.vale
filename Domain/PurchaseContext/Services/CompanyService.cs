@@ -14,8 +14,6 @@ namespace Domain.PurchaseContext.Services
     {
         private readonly ICompaniesRepository _companiesRepository;
         private readonly IPostalCodeService _postalCodeService;
-        private readonly List<Notification> notifications = new();
-
 
         public CompanyService(ICompaniesRepository companiesRepository, IPostalCodeService postalCodeService)
         {
@@ -25,6 +23,8 @@ namespace Domain.PurchaseContext.Services
 
         public async Task<Result<Company>> Add(CompanyDTO entity)
         {
+            List<Notification> notifications = new();
+
             TaxIdentifier taxIdentifier = new(entity.TaxIdentifier);
             Address address = new(entity.Street,
                                   entity.Number,
@@ -77,9 +77,32 @@ namespace Domain.PurchaseContext.Services
             return new(companies, null, true);
         }
 
-        public Task<Result<Company>> GetById(string id)
+        public async Task<Result<Company?>> GetById(string id)
         {
-            throw new NotImplementedException();
+            Guid guid;
+            List<Notification> notifications = new();
+
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                Notification notification = new("Company ID", "is null.");
+                notifications.Add(notification);
+                return new Result<Company?>(null, Error.Create("BadRequest", notifications), false);
+            }
+
+            if (!Guid.TryParse(id, out guid))
+            {
+                Notification notification = new("Company ID", "Guid ID Invalid");
+                notifications.Add(notification);
+                return new Result<Company?>(null, Error.Create("BadRequest", notifications), false);
+            }
+
+            var existingCompany = await _companiesRepository.GetById(guid);
+            if (existingCompany is null)
+            {
+                return new Result<Company?>(null, null, true);
+            }
+
+            return new(existingCompany, null, true);
         }
 
         public async Task<Result<Company?>> GetByTaxIdentifier(string taxIdentifier) 

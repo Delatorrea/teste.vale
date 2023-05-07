@@ -10,7 +10,7 @@ namespace Domain.PurchaseContext.Interfaces.Services
         Task<Result<U>> Add(T entity);
         Task<Result<U>> Update(T entity);
         Task<Result<U>> Delete(string id);
-        Task<Result<U>> GetById(string id);
+        Task<Result<U?>> GetById(string id);
         Task<Result<ResponseGetAllDTO<List<U>>>> GetAll(int page, int pageSize);
     }
 }

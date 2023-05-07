@@ -39,6 +39,17 @@ namespace Web.Controllers
             return Ok(response);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById([FromRoute] string id)
+        {
+            var response = await _companyService.GetById(id);
+            if (!response.IsValid())
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
+
         [HttpGet("GetByTaxIdentifier/{taxIdentifier}")]
         public async Task<IActionResult> GetByTaxIdentifier([FromRoute] string taxIdentifier)
         {
