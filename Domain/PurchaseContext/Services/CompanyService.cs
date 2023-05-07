@@ -66,9 +66,34 @@ namespace Domain.PurchaseContext.Services
             return new Result<Company>(company, null, true);
         }
 
-        public Task<Result<Company>> Delete(string id)
+        public async Task<Result<Company>> Delete(string id)
         {
-            throw new NotImplementedException();
+            List<Notification> notifications = new();
+
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                Notification notification = new("Company ID", "is null.");
+                notifications.Add(notification);
+                return new Result<Company>(null, Error.Create("BadRequest", notifications), false);
+            }
+
+            if (!Guid.TryParse(id, out Guid guid))
+            {
+                Notification notification = new("Company ID", "Guid ID Invalid");
+                notifications.Add(notification);
+                return new Result<Company>(null, Error.Create("BadRequest", notifications), false);
+            }
+
+            var existingCompany = await _companiesRepository.GetById(guid);
+            if (existingCompany is null)
+            {
+                Notification notification = new("Company", "is not exists.");
+                notifications.Add(notification);
+                return new Result<Company>(null, Error.Create("BadRequest", notifications), false);
+            }
+
+            await _companiesRepository.Delete(existingCompany);
+            return new Result<Company>(existingCompany, null, true);
         }
 
         public async Task<Result<ResponseGetAllDTO<List<Company>>>> GetAll(int page = 1, int pageSize = 10)
@@ -79,7 +104,6 @@ namespace Domain.PurchaseContext.Services
 
         public async Task<Result<Company?>> GetById(string id)
         {
-            Guid guid;
             List<Notification> notifications = new();
 
             if (string.IsNullOrWhiteSpace(id))
@@ -89,7 +113,7 @@ namespace Domain.PurchaseContext.Services
                 return new Result<Company?>(null, Error.Create("BadRequest", notifications), false);
             }
 
-            if (!Guid.TryParse(id, out guid))
+            if (!Guid.TryParse(id, out Guid guid))
             {
                 Notification notification = new("Company ID", "Guid ID Invalid");
                 notifications.Add(notification);
@@ -122,9 +146,16 @@ namespace Domain.PurchaseContext.Services
             return new(existingCompany, null, true);
         }
 
-        public async Task<Result<Company>> Update(Guid id, CompanyDTO entity)
+        public async Task<Result<Company>> Update(string id, CompanyDTO entity)
         {
             List<Notification> notifications = new();
+
+            if (!Guid.TryParse(id, out Guid guid))
+            {
+                Notification notification = new("Company ID", "Guid ID Invalid");
+                notifications.Add(notification);
+                return new Result<Company>(null, Error.Create("BadRequest", notifications), false);
+            }
 
             TaxIdentifier taxIdentifier = new(entity.TaxIdentifier);
             if (!taxIdentifier.IsValid)
@@ -149,7 +180,7 @@ namespace Domain.PurchaseContext.Services
                                   entity.PostalCode);
 
             // TODO: Incluir no construtor o Fornecedor
-            Company newCompany = new(id,
+            Company newCompany = new(guid,
                                      taxIdentifier,
                                      entity.TradeName,
                                      address,
