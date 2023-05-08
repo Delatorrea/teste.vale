@@ -26,6 +26,7 @@ namespace Domain.PurchaseContext.Services
         public async Task<Result<Company>> Add(CompanyDTO entity)
         {
             List<Notification> notifications = new();
+            List<Supplier> suppliers = new();
 
             TaxIdentifier taxIdentifier = new(entity.TaxIdentifier);
             Address address = new(entity.Street,
@@ -64,9 +65,61 @@ namespace Domain.PurchaseContext.Services
                                            Error.Create("BadRequest", validationCep.GetErroDescriptions()),
                                            false);
             }
+            
+            foreach (var item in entity.Suppliers)
+            {
+                if (!Guid.TryParse(item, out Guid guidSupplier))
+                {
+                    Notification notification = new("Supplier ID", "Guid ID Invalid");
+                    notifications.Add(notification);
+                    return new Result<Company>(null, Error.Create("BadRequest", notifications), false);
+                }
+                var supplier = await _supplierRepository.GetById(guidSupplier);
+                if (supplier is null)
+                {
+                    Notification notification = new("Supplier", "is not exists.");
+                    notifications.Add(notification);
+                    return new Result<Company>(null, Error.Create("BadRequest", notifications), false);
+                }
+                suppliers.Add(supplier);
+            }
 
             await _companiesRepository.Add(company);
+            var result = await AddSuppliers(company.Id, suppliers);
+            if (!result.IsValid())
+            {
+                return result;
+            }
             return new Result<Company>(company, null, true);
+        }
+
+        public async Task<Result<Company?>> AddSuppliers(Guid id, List<Supplier> suppliers)
+        {
+            List<Notification> notifications = new();
+            
+            if (string.IsNullOrWhiteSpace(id.ToString()))
+            {
+                Notification notification = new("Company ID", "is null.");
+                notifications.Add(notification);
+                return new Result<Company?>(null, Error.Create("BadRequest", notifications), false);
+            }
+
+            if (suppliers.Count <= 0)
+            {
+                Notification notification = new("Suppliers List", "is null.");
+                notifications.Add(notification);
+                return new Result<Company?>(null, Error.Create("BadRequest", notifications), false);
+            }
+
+            var result = await _companiesRepository.AddSuppliers(id, suppliers);
+            if (result is false)
+            {
+                Notification notification = new("Add Suppliers", "Companies not found.");
+                notifications.Add(notification);
+                return new Result<Company?>(null, Error.Create("Error", notifications), false);
+            }
+
+            return new Result<Company?>(null, null, true);
         }
 
         public async Task<Result<Company>> Delete(string id)
@@ -170,7 +223,7 @@ namespace Domain.PurchaseContext.Services
 
             if (existingCompany is null)
             {
-                Notification notification = new("Tax Identifier", "is not exists.");
+                Notification notification = new("Company", "is not exists.");
                 notifications.Add(notification);
                 return new Result<Company>(null, Error.Create("BadRequest", notifications), false);
             }
@@ -192,9 +245,15 @@ namespace Domain.PurchaseContext.Services
                     return new Result<Company>(null, Error.Create("BadRequest", notifications), false);
                 }
                 var supplier = await _supplierRepository.GetById(guidSupplier);
+                if (supplier is null)
+                {
+                    Notification notification = new("Supplier", "is not exists.");
+                    notifications.Add(notification);
+                    return new Result<Company>(null, Error.Create("BadRequest", notifications), false);
+                }
                 suppliers.Add(supplier);
             }
-
+            
             Company newCompany = new(guid,
                                      taxIdentifier,
                                      entity.TradeName,
@@ -216,7 +275,12 @@ namespace Domain.PurchaseContext.Services
             }
 
             await _companiesRepository.Update(newCompany);
-            return new Result<Company>(newCompany, null, true);
+            var result = await AddSuppliers(guid, suppliers);
+            if (!result.IsValid())
+            {
+                return result;
+            }
+            return new Result<Company>(null, null, true);
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using Domain.PurchaseContext.Entities;
-using Domain.PurchaseContext.Interfaces.Repositories;
-using Infra.PurchaseContext.Configuration;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Infra.PurchaseContext.Configuration;
+using Domain.PurchaseContext.Entities;
+using Domain.PurchaseContext.Interfaces.Repositories;
 
 namespace Infra.PurchaseContext.Repositories
 {
@@ -10,13 +10,18 @@ namespace Infra.PurchaseContext.Repositories
     {
         public CompanyRepository(IConfiguration config) : base(config) { }
 
-        public async Task AddSuppliers(Company company)
+        public async Task<bool> AddSuppliers(Guid id, List<Supplier> suppliers)
         {
             await using var data = new ContextBase(option, configuration);
-            var result = await data.Companies.FindAsync(company);
-            result.Suppliers.AddRange(company.Suppliers);
+            var result = await data.Companies.FindAsync(id);
+            if (result is null)
+            {
+                return false;
+            }
+            result.Suppliers.AddRange(suppliers);
             await data.SaveChangesAsync();
-        }
+            return true;
+    }
 
         public async Task<Company?> GetByTaxIdentifier(string taxIdentifier)
         {

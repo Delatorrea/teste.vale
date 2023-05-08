@@ -33,7 +33,7 @@ namespace Infra.PurchaseContext.Repositories
             await data.SaveChangesAsync();
         }
 
-        public async Task<T> GetById(Guid id)
+        public async Task<T?> GetById(Guid id)
         {
             await using var data = new ContextBase(option, configuration);
             return await data.Set<T>().FindAsync(id);
