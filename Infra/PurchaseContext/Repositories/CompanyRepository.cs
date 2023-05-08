@@ -10,6 +10,14 @@ namespace Infra.PurchaseContext.Repositories
     {
         public CompanyRepository(IConfiguration config) : base(config) { }
 
+        public async Task AddSuppliers(Company company)
+        {
+            await using var data = new ContextBase(option, configuration);
+            var result = await data.Companies.FindAsync(company);
+            result.Suppliers.AddRange(company.Suppliers);
+            await data.SaveChangesAsync();
+        }
+
         public async Task<Company?> GetByTaxIdentifier(string taxIdentifier)
         {
             await using var data = new ContextBase(option, configuration);

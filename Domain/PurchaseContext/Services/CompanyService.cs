@@ -13,11 +13,13 @@ namespace Domain.PurchaseContext.Services
     public class CompanyService : ICompanyService
     {
         private readonly ICompanyRepository _companiesRepository;
+        private readonly ISuppliersRepository _supplierRepository;
         private readonly IPostalCodeService _postalCodeService;
 
-        public CompanyService(ICompanyRepository companiesRepository, IPostalCodeService postalCodeService)
+        public CompanyService(ICompanyRepository companiesRepository, ISuppliersRepository supplierRepository, IPostalCodeService postalCodeService)
         {
             _companiesRepository = companiesRepository;
+            _supplierRepository = supplierRepository;
             _postalCodeService = postalCodeService;
         }
 
@@ -34,6 +36,7 @@ namespace Domain.PurchaseContext.Services
                                   entity.State,
                                   entity.Country,
                                   entity.PostalCode);
+
             Company company = new(taxIdentifier,
                                   entity.TradeName,
                                   address);
@@ -55,7 +58,7 @@ namespace Domain.PurchaseContext.Services
             }
 
             var validationCep = await _postalCodeService.GetByPostalCode(company.Address.PostalCode);
-            if (!validationCep.IsValid())
+            if (validationCep.Content is null)
             {
                 return new Result<Company>(null,
                                            Error.Create("BadRequest", validationCep.GetErroDescriptions()),
@@ -149,6 +152,7 @@ namespace Domain.PurchaseContext.Services
         public async Task<Result<Company>> Update(string id, CompanyDTO entity)
         {
             List<Notification> notifications = new();
+            List<Supplier> suppliers = new();
 
             if (!Guid.TryParse(id, out Guid guid))
             {
@@ -179,7 +183,18 @@ namespace Domain.PurchaseContext.Services
                                   entity.Country,
                                   entity.PostalCode);
 
-            // TODO: Incluir no construtor o Fornecedor
+            foreach (var item in entity.Suppliers)
+            {
+                if (!Guid.TryParse(item, out Guid guidSupplier))
+                {
+                    Notification notification = new("Supplier ID", "Guid ID Invalid");
+                    notifications.Add(notification);
+                    return new Result<Company>(null, Error.Create("BadRequest", notifications), false);
+                }
+                var supplier = await _supplierRepository.GetById(guidSupplier);
+                suppliers.Add(supplier);
+            }
+
             Company newCompany = new(guid,
                                      taxIdentifier,
                                      entity.TradeName,
@@ -193,7 +208,7 @@ namespace Domain.PurchaseContext.Services
 
 
             var validationCep = await _postalCodeService.GetByPostalCode(newCompany.Address.PostalCode);
-            if (!validationCep.IsValid())
+            if (validationCep.Content is null)
             {
                 return new Result<Company>(null,
                                            Error.Create("BadRequest", validationCep.GetErroDescriptions()),

@@ -8,12 +8,14 @@ namespace Domain.PurchaseContext.Entities
     {
         public Company() { }
 
-        public Company(TaxIdentifier taxIdentifier, string tradeName, Address address) : base(taxIdentifier, tradeName, address)
+        public Company(TaxIdentifier taxIdentifier, string tradeName, Address address)
+            : base(taxIdentifier, tradeName, address)
         {
             AddNotifications(new CreateCompanyContract(this), taxIdentifier, address);
         }
 
-        public Company(Guid id, TaxIdentifier taxIdentifier, string tradeName, Address address, DateTime creationDate) : base(id, taxIdentifier, tradeName, address, creationDate) 
+        public Company(Guid id, TaxIdentifier taxIdentifier, string tradeName, Address address, DateTime creationDate) 
+            : base(id, taxIdentifier, tradeName, address, creationDate) 
         {
             AddNotifications(new CreateCompanyContract(this), taxIdentifier, address);
         }

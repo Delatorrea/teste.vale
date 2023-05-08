@@ -14,7 +14,6 @@ namespace Infra.PostalCodeContext.Repositories
     {
         private readonly string? _api;
         private readonly HttpClient _httpClient;
-        private readonly List<Notification> notifications = new();
 
         public PostalCodeRepository(IConfiguration config)
         {
@@ -25,6 +24,7 @@ namespace Infra.PostalCodeContext.Repositories
         }
         public async Task<Result<Address>> GetByPostalCode(string postalCode)
         {
+            List<Notification> notifications = new();
             try
             {
                 if (string.IsNullOrEmpty(postalCode))
@@ -33,16 +33,17 @@ namespace Infra.PostalCodeContext.Repositories
                     notifications.Add(notification);
                     return new Result<Address>(null, Error.Create("BadRequest", notifications), false);
                 }
-                await using Stream stream = await _httpClient.GetStreamAsync($"{_api}{postalCode}");
-                var result = await JsonSerializer.DeserializeAsync<Address>(stream);
-                if (result is null)
+                HttpResponseMessage response = await _httpClient.GetAsync($"{_api}{postalCode}");
+                string content = await response.Content.ReadAsStringAsync();
+                if (content is null || content.StartsWith("["))
                 {
                     Notification notification = new("Validation Postal Code", "not found.");
                     notifications.Add(notification);
                     return new Result<Address>(null, Error.Create("NotFound", notifications), true);
                 }
-                Result<Address> response = new(result, null, true);
-                return response;
+                var objectSerializer = JsonSerializer.Deserialize<Address>(content);
+                Result<Address> result = new(objectSerializer, null, true);
+                return result;
             }
             catch (Exception ex)
             {

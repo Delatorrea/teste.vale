@@ -14,38 +14,22 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllersWithViews();
-
-builder.Services.AddDbContext<ContextBase>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    )
-);
-builder.Services.AddDefaultIdentity<User>(options =>
-    options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ContextBase>();
-
-// INTERFACE AND REPOSITORY
-
-builder.Services.AddSingleton(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddSingleton<ICompanyRepository, CompanyRepository>();
-builder.Services.AddSingleton<ISuppliersRepository, SupplierRepository>();
-builder.Services.AddSingleton<IPostalCodeRepository, PostalCodeRepository>();
-
-// Services
-
-builder.Services.AddSingleton<ICompanyService, CompanyService>();
-builder.Services.AddSingleton<ISupplierService, SupplierService>();
-builder.Services.AddSingleton<IPostalCodeService, PostalCodeService>();
-
 IConfiguration config = new ConfigurationBuilder()
         .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
         .AddJsonFile("appsettings.json")
         .Build();
 
-// Adiciona a instância IConfiguration no container de DI
 builder.Services.AddSingleton(config);
-
+builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddSingleton<ICompanyRepository, CompanyRepository>();
+builder.Services.AddSingleton<ISuppliersRepository, SupplierRepository>();
+builder.Services.AddSingleton<IPostalCodeRepository, PostalCodeRepository>();
+builder.Services.AddSingleton<ICompanyService, CompanyService>();
+builder.Services.AddSingleton<ISupplierService, SupplierService>();
+builder.Services.AddSingleton<IPostalCodeService, PostalCodeService>();
+builder.Services.AddDbContext<ContextBase>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ContextBase>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -58,12 +42,6 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
-
+app.MapControllerRoute(name: "default", pattern: "{controller}/{action=Index}/{id?}");
 app.MapFallbackToFile("index.html");
-
 app.Run();

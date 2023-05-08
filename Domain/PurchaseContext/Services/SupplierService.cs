@@ -59,7 +59,7 @@ namespace Domain.PurchaseContext.Services
             }
 
             var validationCep = await _postalCodeService.GetByPostalCode(supplier.Address.PostalCode);
-            if (!validationCep.IsValid())
+            if (validationCep.Content is null)
             {
                 return new Result<Supplier>(null,
                                            Error.Create("BadRequest", validationCep.GetErroDescriptions()),
@@ -201,7 +201,7 @@ namespace Domain.PurchaseContext.Services
 
 
             var validationCep = await _postalCodeService.GetByPostalCode(newSupplier.Address.PostalCode);
-            if (!validationCep.IsValid())
+            if (validationCep.Content is null)
             {
                 return new Result<Supplier>(null,
                                            Error.Create("BadRequest", validationCep.GetErroDescriptions()),
