@@ -8,5 +8,6 @@ namespace Domain.PurchaseContext.Interfaces.Services
     {
         Task<Result<Company?>> GetByTaxIdentifier(string taxIdentifier);
         Task<Result<Company?>> AddSuppliers(Guid id, List<Supplier> suppliers);
+        Task<Result<List<Supplier>>> GetSuppliers(string id);
     }
 }

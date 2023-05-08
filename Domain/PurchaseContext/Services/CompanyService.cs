@@ -202,7 +202,36 @@ namespace Domain.PurchaseContext.Services
             return new(existingCompany, null, true);
         }
 
-        public async Task<Result<Company>> Update(string id, CompanyDTO entity)
+        public async Task<Result<List<Supplier>>> GetSuppliers(string id)
+        {
+            List<Notification> notifications = new();
+
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                Notification notification = new("Company ID", "is null.");
+                notifications.Add(notification);
+                return new Result<List<Supplier>>(null, Error.Create("BadRequest", notifications), false);
+            }
+
+            if (!Guid.TryParse(id, out Guid guid))
+            {
+                Notification notification = new("Company ID", "Guid ID Invalid");
+                notifications.Add(notification);
+                return new Result<List<Supplier>>(null, Error.Create("BadRequest", notifications), false);
+            }
+
+            var suppliers = await _companiesRepository.GetSuppliers(guid);
+            if (suppliers is null)
+            {
+                Notification notification = new("GetSuppliers", "Company not found");
+                notifications.Add(notification);
+                return new Result<List<Supplier>>(null, Error.Create("BadRequest", notifications), false);
+            }
+
+            return  new Result<List<Supplier>>(suppliers, null, true);
+        }
+
+    public async Task<Result<Company>> Update(string id, CompanyDTO entity)
         {
             List<Notification> notifications = new();
             List<Supplier> suppliers = new();

@@ -61,6 +61,17 @@ namespace Web.Controllers
             return Ok(response);
         }
 
+        [HttpGet("Suppliers/{id}")]
+        public async Task<IActionResult> Suppliers([FromRoute] string id)
+        {
+            var response = await _companyService.GetSuppliers(id);
+            if (!response.IsValid())
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromRoute] string id, [FromBody] CompanyDTO body)
         {

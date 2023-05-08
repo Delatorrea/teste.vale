@@ -6,5 +6,6 @@ namespace Domain.PurchaseContext.Interfaces.Repositories
     {
         Task<Company?> GetByTaxIdentifier(string taxIdentifier);
         Task<bool> AddSuppliers(Guid id, List<Supplier> suppliers);
+        Task<List<Supplier>> GetSuppliers(Guid id);
     }
 }

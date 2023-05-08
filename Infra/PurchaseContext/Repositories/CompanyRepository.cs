@@ -30,5 +30,15 @@ namespace Infra.PurchaseContext.Repositories
                           where c.TaxIdentifier.Value.Equals(taxIdentifier)
                           select c).FirstOrDefaultAsync();
         }
-    }
+
+        public async Task<List<Supplier>> GetSuppliers(Guid id)
+        {
+            await using var data = new ContextBase(option, configuration);
+            var result = await data.Companies
+                .Include(company => company.Suppliers)
+                .Where(company => company.Id.Equals(id))
+                .FirstOrDefaultAsync();        
+            return result.Suppliers;
+        }
+  }
 }

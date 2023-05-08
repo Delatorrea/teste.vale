@@ -36,6 +36,20 @@ const PROXY_CONFIG = [
   },
   {
     context: [
+      "/company/Suppliers/:id",
+      "/api/company/Suppliers/"
+    ],
+    target: target,
+    secure: false,
+    headers: {
+      Connection: 'Keep-Alive'
+    },
+    pathRewrite: {
+      '^/company/Suppliers/([0-9]+)$': '/api/company/Suppliers/$1'
+    }
+  },
+  {
+    context: [
       "/supplier",
       "/supplier/:id",
       "/api/supplier",
